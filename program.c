@@ -12,63 +12,77 @@
 
 int currentFloor;
 int queue[3];
-int vbtn1;
-int vbtn2;
-int vbtn3;
+bool vbtn1;
+bool vbtn2;
+bool vbtn3;
 
 
 task queueManager()
 {
-	if(SensorValue(btn1)&&!vbtn1) //on the rising edge of button 1
+	while(1)
 	{
-		vbtn1 = true;
-		if (currentFloor != 1) //if the elevator isn't already on that floor
+		if(SensorValue(btn1) && !vbtn1) //on the rising edge of button 1
 		{
-			for (int i = 0; i < sizeof(queue)/sizeof(int); i++) //check each value in the queue
+			vbtn1 = true;
+			if (currentFloor != 1) //if the elevator isn't already on that floor
 			{
-				if (queue[i]==0)
+				for (int i = 0; i < sizeof(queue)/sizeof(int); i++) //check each value in the queue
 				{
-					queue[i]=1; //add the floor to the first "empty" location in the array
-					break; //don't check any other values
+					if (queue[i]==0)
+					{
+						queue[i]=1; //add the floor to the first "empty" location in the array
+						break; //don't check any other values
+					}
 				}
 			}
 		}
-	}
-	else vbtn1 = false;
+		else
+		{
+			if(!SensorValue(btn1)) vbtn1 = false;
+		}
 
-	if(SensorValue(btn2)&&!vbtn2)
-	{
-		vbtn2 = true;
-		if (currentFloor != 2)
+		if(SensorValue(btn2) && !vbtn2)
 		{
-			for (int i = 0; i < sizeof(queue)/sizeof(int); i++)
+			vbtn2 = true;
+			if (currentFloor != 2)
 			{
-				if (queue[i]==0)
+				for (int i = 0; i < sizeof(queue)/sizeof(int); i++)
 				{
-					queue[i]=2;
-					break;
+					if (queue[i]==0)
+					{
+						queue[i]=2;
+						break;
+					}
 				}
 			}
 		}
-	}
-	else vbtn2 = false;
+		else
+		{
+			if(!SensorValue(btn2)) vbtn2 = false;
+		}
 
-	if(SensorValue(btn3)&&!vbtn3)
-	{
-		vbtn3 = true;
-		if (currentFloor != 3)
+		if(SensorValue(btn3) && !vbtn3)
 		{
-			for (int i = 0; i < sizeof(queue)/sizeof(int); i++)
+			vbtn3 = true;
+			if (currentFloor != 3)
 			{
-				if (queue[i]==0)
+				for (int i = 0; i < sizeof(queue)/sizeof(int); i++)
 				{
-					queue[i]=3;
-					break;
+					if (queue[i]==0)
+					{
+						queue[i]=3;
+						break;
+					}
 				}
 			}
 		}
+		else
+		{
+			if(!SensorValue(btn3)) vbtn3 = false;
+		}
+
+		wait1Msec(100);
 	}
-	else vbtn3 = false;
 }
 
 task elevatorMover()
@@ -80,4 +94,6 @@ task main()
 {
 	startTask(queueManager);
 	startTask(elevatorMover);
+	while(1){}
+
 }
