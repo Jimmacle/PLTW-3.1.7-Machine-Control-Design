@@ -16,6 +16,12 @@ bool vbtn1;
 bool vbtn2;
 bool vbtn3;
 
+bool queueContains(int n)
+{
+	for (int i = 0; i < sizeof(queue)/sizeof(int); i++) if (queue[i]==n) return true;
+	return false;
+}
+
 
 task queueManager()
 {
@@ -24,7 +30,7 @@ task queueManager()
 		if(SensorValue(btn1) && !vbtn1) //on the rising edge of button 1
 		{
 			vbtn1 = true;
-			if (currentFloor != 1) //if the elevator isn't already on that floor
+			if (currentFloor != 1 && !queueContains(1)) //if the elevator isn't already on that floor
 			{
 				for (int i = 0; i < sizeof(queue)/sizeof(int); i++) //check each value in the queue
 				{
@@ -44,7 +50,7 @@ task queueManager()
 		if(SensorValue(btn2) && !vbtn2)
 		{
 			vbtn2 = true;
-			if (currentFloor != 2)
+			if (currentFloor != 2 && !queueContains(2))
 			{
 				for (int i = 0; i < sizeof(queue)/sizeof(int); i++)
 				{
@@ -64,7 +70,7 @@ task queueManager()
 		if(SensorValue(btn3) && !vbtn3)
 		{
 			vbtn3 = true;
-			if (currentFloor != 3)
+			if (currentFloor != 3 && !queueContains(3))
 			{
 				for (int i = 0; i < sizeof(queue)/sizeof(int); i++)
 				{
