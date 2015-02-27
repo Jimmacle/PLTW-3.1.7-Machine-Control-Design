@@ -21,84 +21,56 @@ bool queueContains(int n)
 	return false;
 }
 
+bool addToQueue(int floor)
+{
+    if (currentFloor != floor && !queueContains(floor)) //if the elevator isn't already on that floor or queued to go to that floor
+    {
+		for (int i = 0; i < sizeof(queue)/sizeof(int); i++) //check each value in the queue
+		{
+			if (queue[i]==0)
+			{
+				queue[i]=floor; //add the floor to the first "empty" location in the array
+				return true; //don't check any other locations, return that the floor was added
+			}
+		}
+	}
+	return false; //return that the floor wasn't added
+}
 
 task queueManager()
 {
-	while(1)
+	while(1) //poll the states of the 3 buttons, and if one is pressed add its floor to the queue
 	{
 		if(SensorValue(btn1) && !vbtn1) //on the rising edge of button 1
 		{
 			vbtn1 = true;
-			if (currentFloor != 1 && !queueContains(1)) //if the elevator isn't already on that floor
-			{
-				for (int i = 0; i < sizeof(queue)/sizeof(int); i++) //check each value in the queue
-				{
-					if (queue[i]==0)
-					{
-						queue[i]=1; //add the floor to the first "empty" location in the array
-						break; //don't check any other values
-					}
-				}
-			}
+			addToQueue(1);
 		}
-		else
-		{
-			if(!SensorValue(btn1)) vbtn1 = false;
-		}
+		else if(!SensorValue(btn1)) vbtn1 = false;
 
-		if(SensorValue(btn2) && !vbtn2)
+		if(SensorValue(btn2) && !vbtn2) //on the rising edge of button 2
 		{
 			vbtn2 = true;
-			if (currentFloor != 2 && !queueContains(2))
-			{
-				for (int i = 0; i < sizeof(queue)/sizeof(int); i++)
-				{
-					if (queue[i]==0)
-					{
-						queue[i]=2;
-						break;
-					}
-				}
-			}
+			addToQueue(2);
 		}
-		else
-		{
-			if(!SensorValue(btn2)) vbtn2 = false;
-		}
+		else if(!SensorValue(btn2)) vbtn2 = false;
 
-		if(SensorValue(btn3) && !vbtn3)
+		if(SensorValue(btn3) && !vbtn3) //on the rising edge of button 3
 		{
 			vbtn3 = true;
-			if (currentFloor != 3 && !queueContains(3))
-			{
-				for (int i = 0; i < sizeof(queue)/sizeof(int); i++)
-				{
-					if (queue[i]==0)
-					{
-						queue[i]=3;
-						break;
-					}
-				}
-			}
+			addToQueue(3);
 		}
-		else
-		{
-			if(!SensorValue(btn3)) vbtn3 = false;
-		}
+		else if(!SensorValue(btn3)) vbtn3 = false;
 
-		wait1Msec(100);
+		wait1Msec(100); //debounce buttons
 	}
-}
-
-task elevatorMover()
-{
-
 }
 
 task main()
 {
 	startTask(queueManager);
-	startTask(elevatorMover);
-	while(1){}
+	while(1) //add elevator control code here
+    {
 
+    }
 }
