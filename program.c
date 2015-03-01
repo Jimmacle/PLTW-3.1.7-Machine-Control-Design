@@ -58,6 +58,14 @@ void changeLEDs()
 		break;
 	}
 }
+
+void updateQueues()	//push queues up when a queue is used already
+{
+	queue[0] = queue[1];
+	queue[1] = queue[2];
+	queue[2] = NULL;
+}
+
 task queueManager()
 {
 	while(1) //poll the states of the 3 buttons, and if one is pressed add its floor to the queue
@@ -87,13 +95,43 @@ task queueManager()
 	}
 }
 
+//ELEVATOR FUNCTIONS AND PROCESS
+void moveToFloor(int flr)
+{
+	//sonar: 	|1st floor	|2nd floor	|3rd floor
+	//(about)	|0mm				|90mm				|180mm
+	int dBtwFlr = 90;	//distance between floors
+	int distance = dBtwFlr*(flr-1);	//distance to desired floor
+
+	if(currentFloor<flr)
+	{
+		while(SensorValue[sonar]<distance)
+			motor[liftMotor] = 127; //until sonar reaches distance
+		motor[liftMotor] = 0;
+		currentFloor = flr;
+	}
+	else if(currentFloor>flr)
+	{
+		while(SensorValue[sonar]>distance)
+			motor[liftMotor] = -127; //until sonar reaches distance
+		motor[liftMotor] = 0;
+		currentFloor = flr;
+	}
+	else
+		motor[liftMotor] = 0;
+}
+
 //MAIN TASK AND PROCESS
 task main()
 {
 	startTask(queueManager);
+
 	while(1) //add elevator control code here
 	{
-		changeLEDs();
+		int qFloor = queue[1];	//define first floor to go to
 
+		changeLEDs();
+		moveToFloor(qFloor);	//move to first floor in queue
+		updateQueues();	//update queues
 	}
 }
