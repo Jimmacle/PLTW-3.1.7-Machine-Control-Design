@@ -61,6 +61,22 @@ void changeLEDs()
 
 void updateQueues()	//push queues up when a queue is used already
 {
+	int qFlr = queue[0];
+	switch(qFlr)
+	{
+		case 1:
+			vbtn1 = false;
+			break;
+
+		case 2:
+			vbtn2 = false;
+			break;
+
+		case 3:
+			vbtn3 = false;
+			break;
+	}
+
 	queue[0] = queue[1];
 	queue[1] = queue[2];
 	queue[2] = NULL;
@@ -74,6 +90,7 @@ task queueManager()
 		{
 			vbtn1 = true;
 			addToQueue(1);
+			clearTimer(T1); //clears timer every time button is pressed
 		}
 		else if(!SensorValue(btn1)) vbtn1 = false;
 
@@ -81,6 +98,7 @@ task queueManager()
 		{
 			vbtn2 = true;
 			addToQueue(2);
+			clearTimer(T1);
 		}
 		else if(!SensorValue(btn2)) vbtn2 = false;
 
@@ -88,6 +106,7 @@ task queueManager()
 		{
 			vbtn3 = true;
 			addToQueue(3);
+			clearTimer(T1);
 		}
 		else if(!SensorValue(btn3)) vbtn3 = false;
 
@@ -121,6 +140,12 @@ void moveToFloor(int flr)
 		motor[liftMotor] = 0;
 }
 
+void safetyMech()
+{
+	if(time1(T1)>20000)//when timer hits 20 seconds
+		moveToFloor(1);
+}
+
 //MAIN TASK AND PROCESS
 task main()
 {
@@ -128,10 +153,11 @@ task main()
 
 	while(1) //add elevator control code here
 	{
-		int qFloor = queue[1];	//define first floor to go to
+		int qFloor = queue[0];	//define first floor to go to
 
 		changeLEDs();
 		moveToFloor(qFloor);	//move to first floor in queue
 		updateQueues();	//update queues
+		safetyMech();
 	}
 }
