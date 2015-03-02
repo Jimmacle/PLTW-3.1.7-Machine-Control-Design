@@ -7,10 +7,11 @@
 #pragma config(Sensor, dgtl6,  led1,           sensorLEDtoVCC)
 #pragma config(Sensor, dgtl7,  led2,           sensorLEDtoVCC)
 #pragma config(Sensor, dgtl8,  led3,           sensorLEDtoVCC)
-#pragma config(Motor,  port2,           liftMotor,     tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port2,  liftMotor,      tmotorVex393_MC29, openLoop)
 
 int currentFloor = 1;
 int queue[3];
+int qInd = 0;
 bool vbtn1;
 bool vbtn2;
 bool vbtn3;
@@ -38,7 +39,7 @@ bool addToQueue(int flr)
 	return false; //return that the floor wasn't added
 }
 
-void changeLEDs()
+void f5LEDs()
 {
 	SensorValue[led1] = 0;
 	SensorValue[led2] = 0;
@@ -93,7 +94,14 @@ task main()
 	startTask(queueManager);
 	while(1) //add elevator control code here
 	{
-		changeLEDs();
-
+		if (queue[qInd] != 0)
+		{
+			if (queue[qInd] == currentFloor)
+			{
+				queue[qInd] = 0;
+			}
+			else if (queue[
+		}
+		f5LEDs();
 	}
 }
