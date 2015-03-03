@@ -40,24 +40,32 @@ bool addToQueue(int flr)
 	return false; //return that the floor wasn't added
 }
 
-void changeLEDs()
+task changeLEDs()
 {
-	SensorValue[led1] = 0;
-	SensorValue[led2] = 0;
-	SensorValue[led3] = 0;
-	switch (currentFloor)
+	while(1)
 	{
-	case 1:
-		SensorValue[led1] = 1;
-		break;
+		int height = SensorValue(sonar);
+		if(height > 0 && height < 90)
+		{
+			SensorValue[led1] = 1;
+			SensorValue[led2] = 0;
+			SensorValue[led3] = 0;
+		}
 
-	case 2:
-		SensorValue[led2] = 1;
-		break;
+		else if(height > 90 && height <150)
+		{
+			SensorValue[led1] = 0;
+			SensorValue[led2] = 1;
+			SensorValue[led3] = 0;
+		}
 
-	case 3:
-		SensorValue[led3] = 1;
-		break;
+		else if(height > 150 && height < 210)
+		{
+			SensorValue[led1] = 0;
+			SensorValue[led2] = 0;
+			SensorValue[led3] = 1;
+
+		}
 	}
 }
 
@@ -97,6 +105,7 @@ task queueManager()
 task main()
 {
 	startTask(queueManager);
+	startTask(changeLEDs);
 	currentFloor = 0;
 	addToQueue(1);
 	while(1) //add elevator control code here
@@ -126,6 +135,5 @@ task main()
 			queue[1] = queue[2];
 			queue[2] = 0;
 		}
-		changeLEDs();
 	}
 }
