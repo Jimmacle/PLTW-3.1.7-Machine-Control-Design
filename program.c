@@ -93,8 +93,6 @@ task queueManager()
 	}
 }
 
-<<<<<<< HEAD
-=======
 //ELEVATOR FUNCTIONS AND PROCESS
 void moveToFloor(int flr)
 {
@@ -127,7 +125,6 @@ void safetyMech()
 		moveToFloor(1);
 }
 
->>>>>>> origin/master
 //MAIN TASK AND PROCESS
 task main()
 {
