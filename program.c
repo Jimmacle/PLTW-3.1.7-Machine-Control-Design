@@ -117,30 +117,27 @@ task queueManager()
 //ELEVATOR FUNCTIONS AND PROCESS
 void moveToFloor(int flr)
 {
-	if(flr>0)
-	{
-		//sonar: 	|1st floor	|2nd floor	|3rd floor
-		//(about)	|0mm				|90mm				|180mm
-		int dBtwFlr = 90;	//distance between floors
-		int distance = dBtwFlr*(flr-1);	//distance to desired floor
+	//sonar: 	|1st floor	|2nd floor	|3rd floor
+	//(about)	|0mm				|90mm				|180mm
+	int dBtwFlr = 90;	//distance between floors
+	int distance = dBtwFlr*(flr-1);	//distance to desired floor
 
-		if(currentFloor<flr)
-		{
-			while(SensorValue[sonar]<distance)
-				motor[liftMotor] = -127; //until sonar reaches distance
-			motor[liftMotor] = 0;
-			currentFloor = flr;
-		}
-		else if(currentFloor>flr)
-		{
-			while(SensorValue[sonar]>distance)
-				motor[liftMotor] = 127; //until sonar reaches distance
-			motor[liftMotor] = 0;
-			currentFloor = flr;
-		}
-		else
-			motor[liftMotor] = 0;
+	if(currentFloor<flr)
+	{
+		while(SensorValue[sonar]<distance)
+			motor[liftMotor] = 127; //until sonar reaches distance
+		motor[liftMotor] = 0;
+		currentFloor = flr;
 	}
+	else if(currentFloor>flr)
+	{
+		while(SensorValue[sonar]>distance)
+			motor[liftMotor] = -127; //until sonar reaches distance
+		motor[liftMotor] = 0;
+		currentFloor = flr;
+	}
+	else
+		motor[liftMotor] = 0;
 }
 
 void safetyMech()
