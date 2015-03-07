@@ -14,9 +14,9 @@
 int currentFloor = 1; //floor elevator is currently in
 int queue[3];	//create an array "queue" of size 3
 int target;	//represents the floor elevator is headed to
-bool vbtn1;	//variable checking if first floor is already in the queue
-bool vbtn2;	//variable checking if second floor is already in the queue
-bool vbtn3;	//variable checking if third floor is already in the queue
+bool vbtn1;	//variable checking if first button is pressed (to "debounce")
+bool vbtn2;	//variable checking if second button is pressed
+bool vbtn3;	//variable checking if third button is pressed
 
 //QUEUE FUNCTIONS AND PROCESS
 bool queueContains(int n)	//checks if the queue contains a floor
@@ -31,9 +31,9 @@ bool addToQueue(int flr)	//function that adds floors to queue
 	{
 		for (int i = 0; i < sizeof(queue)/sizeof(int); i++) //check each value in the queue
 		{
-			if (queue[i]==0)	//if index of array queue is 0
+			if (queue[i]==0)	//if index i of array queue is 0
 			{
-				queue[i]=flr; //add the floor to the first "empty" location in the array
+				queue[i]=flr; //add the floor to that location in the array
 				return true; //don't check any other locations, return that the floor was added
 			}
 		}
@@ -75,7 +75,7 @@ task queueManager()	//task that manages queue array
 	{
 		if(SensorValue(btn1) && !vbtn1) //on the rising edge of button 1
 		{
-			vbtn1 = true;	//make vbtn1 true, indicating that floor 1 is already in the queue
+			vbtn1 = true;	//make vbtn1 true, indicating that button 1 is pressed (for edge detection)
 			addToQueue(1);	//add floor 1 to the queue
 			clearTimer(T1); //clears timer, used for safety mechanism
 		}
@@ -83,7 +83,7 @@ task queueManager()	//task that manages queue array
 
 		if(SensorValue(btn2) && !vbtn2) //on the rising edge of button 2
 		{
-			vbtn2 = true;	//make vbtn2 true, indicating that floor 2 is already in the queue
+			vbtn2 = true;	//make vbtn2 true, indicating that button 2 is pressed (for edge detection)
 			addToQueue(2);	//add floor 2 to the queue
 			clearTimer(T1);	//clears timer, used for safety mechanism
 		}
@@ -91,13 +91,13 @@ task queueManager()	//task that manages queue array
 
 		if(SensorValue(btn3) && !vbtn3) //on the rising edge of button 3
 		{
-			vbtn3 = true;	//make vbtn3 true, indicating that floor 3 is already in the queue
+			vbtn3 = true;	//make vbtn3 true, indicating that button 3 is pressed (for edge detection)
 			addToQueue(3);	//add floor 3 to the queue
 			clearTimer(T1);	//clears timer, used for safety mechanism
 		}
 		else if(!SensorValue(btn3)) vbtn3 = false;	//if button 3 is not pressed, vbtn1 = false
 
-		wait1Msec(100); //debounce buttons
+		wait1Msec(100); //delay to fix logic issues
 	}
 }
 
@@ -110,10 +110,10 @@ task main()	//main task
 	addToQueue(1);	//add floor 1 to queue, making the elevator start at floor 1
 	while(1) //add elevator control code here
 	{
-		if(time1(T1)>10000) addToQueue(1);	//if timer, clearing when button is pressed, reaches 10 seconds, go to 1st floor
-		if(queue[0] != 0)	//when there is a queue
+		if(time1(T1)>10000) addToQueue(1);	//if timer reaches 10 seconds go to first floor
+		if(queue[0] != 0)	//if there is a floor in the queue
 		{
-			currentFloor = queue[0];	//make currentFloor equal to first queue
+			currentFloor = queue[0];	//make currentFloor equal to the queued floor
 			target = queue[0]*60;	//target floor is at height of desired floor times 60 mm
 			if (SensorValue(sonar) < target)	//if current floor is lower than desired floor, go up
 			{
